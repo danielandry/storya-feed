@@ -1,8 +1,8 @@
 name: Atualizar feed
 on:
   schedule:
-    - cron: '17 */3 * * *'
-  workflow_dispatch:
+    - cron: '*/30 * * * *'    # a cada 30 minutos (o GitHub pode atrasar alguns minutos)
+  workflow_dispatch:           # botão "Run workflow", para atualizar na hora
 permissions:
   contents: write
 jobs:
@@ -13,8 +13,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node gerar-feed.mjs
-      - run: |
+      - name: Gerar docs/feed.json a partir do Substack
+        run: node gerar-feed.mjs
+      - name: Publicar se mudou
+        run: |
           git config user.name "feed-bot"
           git config user.email "feed-bot@users.noreply.github.com"
           git add docs/feed.json
